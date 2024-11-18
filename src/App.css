@@ -1,0 +1,7 @@
+.super-hero-page{ 
+    background: rgb(111,0,0);
+    background: linear-gradient(144deg, rgba(111,0,0,1) 0%, rgba(87,0,0,1) 15%, rgba(7,5,38,1) 82%); 
+  border-radius: 20px;
+    padding: 25px;
+    color: aliceblue;
+ }
