@@ -4,7 +4,9 @@ import { Button, Form, Modal, Table } from "react-bootstrap";
 import { getAllGrievancesAPI, updateGrievancesAPI } from "../services/AllAPI";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import io from "socket.io-client";
+import { SERVER_URL } from "../services/ServerUrl";
+ 
 function Home() {
   const [grievances, setGrievances] = useState([]);
   const [currentGrievance, setCurrentGrievance] = useState(null);
@@ -28,6 +30,19 @@ function Home() {
       setGrievances([]);
     }
   };
+  // to realtime update from user
+  useEffect(() => {
+    const socket = io(SERVER_URL, { transports: ["websocket", "polling"],
+      autoConnect: true,
+     }); 
+    socket.on("new-grievance", (data) => {
+      // console.log("New grievance received on client:", data);
+      setGrievances((prev) => [data, ...prev]);
+    });
+    return () => {
+      socket.disconnect(); // Clean up connection on unmount
+    };
+  }, []);
 
   useEffect(() => {
     const token = sessionStorage.getItem("SuperHeroToken");
@@ -68,7 +83,7 @@ function Home() {
 
   // Handle filtering and sorting
   const sortedFilteredGrievances = grievances
-    .filter((grievance) => {
+    ?.filter((grievance) => {
       // Filter by status
       if (filterStatus && grievance.status !== filterStatus) {
         return false;
@@ -160,7 +175,7 @@ function Home() {
           </div>
         </div>
 
-        {sortedFilteredGrievances.length > 0 ? (
+        {sortedFilteredGrievances?.length > 0 ? (
           <Table striped bordered hover responsive>
             <thead>
               <tr>
