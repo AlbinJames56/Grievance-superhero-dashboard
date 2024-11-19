@@ -4,11 +4,14 @@ import './App.css'
 import Home from './Pages/Home'
 import { Route, Routes } from "react-router-dom";
 import Login from "./Pages/Login"; 
+import { useContext } from "react";
+import { TokenAuthContext } from "./ContextAPI/AuthContext";
 function App() { 
+  const {isAuthorized,setIsAuthorized}=useContext(TokenAuthContext)
   return (
     <>
    <Routes>
-      <Route path="/" element={<Home/>} />
+      <Route path="/" element={isAuthorized?<Home/>:<Login/>} />
       <Route path='/login' element={<Login/>}/>  
       </Routes>
 

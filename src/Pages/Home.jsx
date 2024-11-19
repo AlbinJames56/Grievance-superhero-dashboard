@@ -3,6 +3,7 @@ import Header from "../Components/Header";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import { getAllGrievancesAPI, updateGrievancesAPI } from "../services/AllAPI";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [grievances, setGrievances] = useState([]);
@@ -17,6 +18,7 @@ function Home() {
   const [sortCreatedDate, setSortCreatedDate] = useState("asc");
   const [sortUpdatedDate, setSortUpdatedDate] = useState("asc");
 
+  const navigate = useNavigate();
   const getGrievances = async () => {
     try {
       const response = await getAllGrievancesAPI();
@@ -28,6 +30,10 @@ function Home() {
   };
 
   useEffect(() => {
+    const token = sessionStorage.getItem("SuperHeroToken");
+    if (!token) {
+      navigate("/");
+    }
     getGrievances();
   }, []);
 
@@ -83,11 +89,23 @@ function Home() {
       }
       return 0; // No sorting applied
     });
+  // formatting date
+  const formatDate = (date) => {
+    const dateObject = new Date(date);
+    return dateObject.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   return (
     <div>
       <Header />
-      <div className="super-hero-page m-5">
+      <div className="super-hero-page m-sm-5 m-2">
         <div className="row">
           <div className="col-sm-4">
             {/* Filter by Status */}
@@ -143,14 +161,14 @@ function Home() {
         </div>
 
         {sortedFilteredGrievances.length > 0 ? (
-          <Table striped bordered hover>
+          <Table striped bordered hover responsive>
             <thead>
               <tr>
                 <th>Index</th>
                 <th>User Name</th>
                 <th>Issue</th>
                 <th>Created Date</th>
-                <th>Description</th>
+                <th className="d-none d-md-table-cell">Description</th>
                 <th>Status</th>
                 <th>Action</th>
                 <th>Updated Date</th>
@@ -159,25 +177,15 @@ function Home() {
             </thead>
             <tbody>
               {sortedFilteredGrievances.map((grievance, index) => {
-                const formatDate = (date) => {
-                  const dateObject = new Date(date);
-                  return dateObject.toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  });
-                };
-                
                 return (
                   <tr key={grievance._id}>
                     <td>{index + 1}</td>
                     <td>{grievance.name}</td>
                     <td>{grievance.issue}</td>
                     <td>{formatDate(grievance.date)}</td>
-                    <td>{grievance.description}</td>
+                    <td className="d-none d-md-table-cell">
+                      {grievance.description}
+                    </td>
                     <td>{grievance.status}</td>
                     <td>{grievance.action}</td>
                     <td>{formatDate(grievance.updatedDate)}</td>

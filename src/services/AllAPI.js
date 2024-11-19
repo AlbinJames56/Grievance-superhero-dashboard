@@ -3,8 +3,8 @@ import { SERVER_URL } from "./ServerUrl"
 
   
   // login API
-  export const AdminLoginAPI = async (user) => {
-    return await commonAPI("POST", `${SERVER_URL}AdminRouter/SuperHeroLogin`, user,"");
+  export const AdminLoginAPI = async (superHero) => {
+    return await commonAPI("POST", `${SERVER_URL}AdminRouter/loginSuperHero`,superHero);
   };
   // fetch userGrievances
   export const getAllGrievancesAPI = async () => {
