@@ -5,3 +5,19 @@
     }
   }
   
+
+  .grievanceCard{
+    height:360px ;
+  }
+  .description{
+    max-height: 100px;
+    overflow-x: auto; 
+  }
+
+   
+  .limited-height .content {
+    max-height: calc(7 * 1.2em);  
+    overflow-y: auto;   
+  }
+  
+   

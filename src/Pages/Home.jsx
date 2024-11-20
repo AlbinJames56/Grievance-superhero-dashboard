@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
-import { Button, Form, Modal, Table } from "react-bootstrap";
+import { Button, Card, Col, Form, Modal, Row, Table } from "react-bootstrap";
 import { getAllGrievancesAPI, updateGrievancesAPI } from "../services/AllAPI";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { SERVER_URL } from "../services/ServerUrl";
- 
+import './Home.css'
 function Home() {
   const [grievances, setGrievances] = useState([]);
   const [currentGrievance, setCurrentGrievance] = useState(null);
@@ -19,7 +19,8 @@ function Home() {
   const [filterStatus, setFilterStatus] = useState("");
   const [sortCreatedDate, setSortCreatedDate] = useState("asc");
   const [sortUpdatedDate, setSortUpdatedDate] = useState("asc");
-
+//set card or table view 
+  const [isCardView, setIsCardView] = useState(false); 
   const navigate = useNavigate();
   const getGrievances = async () => {
     try {
@@ -29,12 +30,13 @@ function Home() {
       console.log("Error fetching grievances", err);
       setGrievances([]);
     }
-  };
+  }; 
   // to realtime update from user
   useEffect(() => {
-    const socket = io(SERVER_URL, { transports: ["websocket", "polling"],
+    const socket = io(SERVER_URL, {
+      transports: ["websocket", "polling"],
       autoConnect: true,
-     }); 
+    });
     socket.on("new-grievance", (data) => {
       // console.log("New grievance received on client:", data);
       setGrievances((prev) => [data, ...prev]);
@@ -121,6 +123,12 @@ function Home() {
     <div>
       <Header />
       <div className="super-hero-page m-sm-5 m-2">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2>Grievances</h2>
+          <Button variant="warning" onClick={() => setIsCardView(!isCardView)}>
+            {isCardView ? <i class="fa fa-table"  ></i> : <i class="fa-solid fa-id-card"></i>}
+          </Button>
+        </div>
         <div className="row">
           <div className="col-sm-4">
             {/* Filter by Status */}
@@ -174,8 +182,45 @@ function Home() {
             </Form.Group>
           </div>
         </div>
-
-        {sortedFilteredGrievances?.length > 0 ? (
+        {isCardView ? (
+          <Row>
+            {sortedFilteredGrievances.map((grievance, index) => (
+              <Col key={grievance._id} sm={12} md={6} lg={4} className="mb-3">
+                <Card className="grievanceCard">
+                  <Card.Body>
+                    <Card.Title>{grievance.name}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted  " >
+                      Issue: {grievance.issue}
+                    </Card.Subtitle>
+                    <Card.Text className="description">
+                      <strong>Description:</strong>{" "}
+                      {grievance.description || "N/A"}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Status:</strong> {grievance.status}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Created:</strong> {formatDate(grievance.date)}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Supporting Document:</strong> <img width={80} src={grievance.file}  alt="" />
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Updated:</strong>{" "}
+                      {formatDate(grievance.updatedDate)}
+                    </Card.Text>
+                    <Button
+                      variant="warning"
+                      onClick={() => handleViewGrievance(grievance)}
+                    >
+                      View Details
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        ) : sortedFilteredGrievances?.length > 0 ? (
           <Table striped bordered hover responsive>
             <thead>
               <tr>
@@ -187,6 +232,7 @@ function Home() {
                 <th>Status</th>
                 <th>Action</th>
                 <th>Updated Date</th>
+                <th>Supporting Doc</th>
                 <th></th>
               </tr>
             </thead>
@@ -198,12 +244,15 @@ function Home() {
                     <td>{grievance.name}</td>
                     <td>{grievance.issue}</td>
                     <td>{formatDate(grievance.date)}</td>
-                    <td className="d-none d-md-table-cell">
-                      {grievance.description}
-                    </td>
+                    <td className="limited-height">
+  <div className="content">{grievance.description}</div>
+</td>
                     <td>{grievance.status}</td>
                     <td>{grievance.action}</td>
                     <td>{formatDate(grievance.updatedDate)}</td>
+                    <td>
+                      <img width={150} src={grievance.file} alt="" />
+                    </td>
                     <td>
                       <Button
                         variant="warning"
@@ -275,6 +324,7 @@ function Home() {
                   </Form.Label>
                   <Form.Control
                     type="text"
+                    placeholder="write the taken action here"
                     value={action}
                     onChange={(e) => setAction(e.target.value)}
                   />
@@ -282,13 +332,9 @@ function Home() {
 
                 <Form.Group className="mb-3">
                   <Form.Label>
-                    <strong>Updated Date:</strong>
+                    <strong>Supporting Document:</strong>
                   </Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={updatedDate || ""}
-                    readOnly
-                  />
+                  <img width={460} src={currentGrievance.file} alt="" />
                 </Form.Group>
               </Form>
             </div>
