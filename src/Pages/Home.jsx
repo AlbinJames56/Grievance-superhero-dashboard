@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { SERVER_URL } from "../services/ServerUrl";
-import './Home.css'
+import "./Home.css";
 function Home() {
   const [grievances, setGrievances] = useState([]);
   const [currentGrievance, setCurrentGrievance] = useState(null);
@@ -19,8 +19,8 @@ function Home() {
   const [filterStatus, setFilterStatus] = useState("");
   const [sortCreatedDate, setSortCreatedDate] = useState("asc");
   const [sortUpdatedDate, setSortUpdatedDate] = useState("asc");
-//set card or table view 
-  const [isCardView, setIsCardView] = useState(false); 
+  //set card or table view
+  const [isCardView, setIsCardView] = useState(false);
   const navigate = useNavigate();
   const getGrievances = async () => {
     try {
@@ -30,7 +30,7 @@ function Home() {
       console.log("Error fetching grievances", err);
       setGrievances([]);
     }
-  }; 
+  };
   // to realtime update from user
   useEffect(() => {
     const socket = io(SERVER_URL, {
@@ -126,7 +126,11 @@ function Home() {
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Grievances</h2>
           <Button variant="warning" onClick={() => setIsCardView(!isCardView)}>
-            {isCardView ? <i class="fa fa-table"  ></i> : <i class="fa-solid fa-id-card"></i>}
+            {isCardView ? (
+              <i class="fa fa-table"></i>
+            ) : (
+              <i class="fa-solid fa-id-card"></i>
+            )}
           </Button>
         </div>
         <div className="row">
@@ -189,7 +193,7 @@ function Home() {
                 <Card className="grievanceCard">
                   <Card.Body>
                     <Card.Title>{grievance.name}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted  " >
+                    <Card.Subtitle className="mb-2 text-muted  ">
                       Issue: {grievance.issue}
                     </Card.Subtitle>
                     <Card.Text className="description">
@@ -203,7 +207,8 @@ function Home() {
                       <strong>Created:</strong> {formatDate(grievance.date)}
                     </Card.Text>
                     <Card.Text>
-                      <strong>Supporting Document:</strong> <img width={80} src={grievance.file}  alt="" />
+                      <strong>Supporting Document:</strong>{" "}
+                      <img width={80} src={grievance.file} alt="" />
                     </Card.Text>
                     <Card.Text>
                       <strong>Updated:</strong>{" "}
@@ -228,7 +233,7 @@ function Home() {
                 <th>User Name</th>
                 <th>Issue</th>
                 <th>Created Date</th>
-                <th className="d-none d-md-table-cell">Description</th>
+                <th>Description</th>
                 <th>Status</th>
                 <th>Action</th>
                 <th>Updated Date</th>
@@ -245,8 +250,8 @@ function Home() {
                     <td>{grievance.issue}</td>
                     <td>{formatDate(grievance.date)}</td>
                     <td className="limited-height">
-  <div className="content">{grievance.description}</div>
-</td>
+                      <div className="content">{grievance.description}</div>
+                    </td>
                     <td>{grievance.status}</td>
                     <td>{grievance.action}</td>
                     <td>{formatDate(grievance.updatedDate)}</td>
