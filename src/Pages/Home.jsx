@@ -22,6 +22,8 @@ function Home() {
   //set card or table view
   const [isCardView, setIsCardView] = useState(false);
   const navigate = useNavigate();
+
+  // getting grievances
   const getGrievances = async () => {
     try {
       const response = await getAllGrievancesAPI();
@@ -45,7 +47,7 @@ function Home() {
       socket.disconnect(); // Clean up connection on unmount
     };
   }, []);
-
+// verify admin and calling grievances
   useEffect(() => {
     const token = sessionStorage.getItem("SuperHeroToken");
     if (!token) {
