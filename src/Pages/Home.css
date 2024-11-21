@@ -1,10 +1,4 @@
-/* Hide description column on small screens */
-@media (max-width: 768px) {
-    .d-md-table-cell {
-      display: none !important;
-    }
-  }
-  
+ 
 
   .grievanceCard{
     height:360px ;
