@@ -1,8 +1,8 @@
 # Grievance Portal - Superhero Dashboard
 
 ## LOGIN Credentials
-   ## Username: admin
-   ## password: aaa
+   Username: admin
+   password: aaa
 
 ## Description
 The Superhero Dashboard is a React.js application designed for superheroes to view and resolve grievances submitted by users. 
